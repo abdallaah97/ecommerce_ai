@@ -1,0 +1,110 @@
+@FullStackAPI_AI_HostAddress = http://localhost:5270
+
+### 1) إنشاء قسم جديد (Category) - تجربة علاقة 1:N
+POST {{FullStackAPI_AI_HostAddress}}/api/Categories/CreateCategory
+Content-Type: application/json
+
+{
+  "name": "Electronics & Gadgets",
+  "description": "Smartphones, Laptops, and Accessories"
+}
+
+### 2) جلب جميع الأقسام
+GET {{FullStackAPI_AI_HostAddress}}/api/Categories/GetCategories
+Accept: application/json
+
+### 3) إنشاء وسوم (Tags) - تجربة علاقة N:M
+POST {{FullStackAPI_AI_HostAddress}}/api/Tags/CreateTag
+Content-Type: application/json
+
+{
+  "name": "Featured"
+}
+
+### 4) إنشاء وسم آخر
+POST {{FullStackAPI_AI_HostAddress}}/api/Tags/CreateTag
+Content-Type: application/json
+
+{
+  "name": "BestSeller"
+}
+
+### 5) جلب جميع الوسوم
+GET {{FullStackAPI_AI_HostAddress}}/api/Tags/GetTags
+Accept: application/json
+
+### 6) إنشاء منتج مادي (Physical Product) مع كامل علاقاته:
+# - علاقة 1:1 مع PhysicalProfile (وزن، أبعاد، موقع المستودع)
+# - علاقة 1:N مع Category (القسم رقم 1)
+# - علاقة N:M مع Tags (الوسم 1 و 2)
+POST {{FullStackAPI_AI_HostAddress}}/api/Products/CreateProduct
+Content-Type: application/json
+
+{
+  "name": "Pro Gaming Laptop 16\"",
+  "sku": "LAP-PRO-2026",
+  "price": 1499.99,
+  "type": 1,
+  "categoryId": 1,
+  "physical": {
+    "weightKg": 2.35,
+    "dimensions": "35x25x2 cm",
+    "warehouseLocation": "Aisle 4, Shelf B"
+  },
+  "tagIds": [1, 2]
+}
+
+### 7) إنشاء منتج رقمي (Digital Product) مع علاقة 1:1 بـ DigitalProfile
+POST {{FullStackAPI_AI_HostAddress}}/api/Products/CreateProduct
+Content-Type: application/json
+
+{
+  "name": "Advanced ASP.NET Core E-Book",
+  "sku": "BK-NET10-DIGITAL",
+  "price": 49.99,
+  "type": 2,
+  "categoryId": 1,
+  "digital": {
+    "downloadUrl": "https://cdn.example.com/books/net10-guide.pdf",
+    "fileSizeMB": 45.5,
+    "fileFormat": "PDF"
+  },
+  "tagIds": [1]
+}
+
+### 8) جلب المنتج مع كافة علاقاته (Include Category, Profile, Reviews, Tags)
+GET {{FullStackAPI_AI_HostAddress}}/api/Products/GetProduct/1
+Accept: application/json
+
+### 9) إضافة مراجعة وتقييم للمنتج (إضافة إلى علاقة 1:N ديناميكياً)
+POST {{FullStackAPI_AI_HostAddress}}/api/Products/AddReview/1
+Content-Type: application/json
+
+{
+  "reviewerName": "Ahmad Programmer",
+  "rating": 5,
+  "comment": "Outstanding performance and high quality build!"
+}
+
+### 10) تحديث سعر المنتج (HTTP Patch)
+PATCH {{FullStackAPI_AI_HostAddress}}/api/Products/UpdateProductPrice/1
+Content-Type: application/json
+
+{
+  "price": 1399.50
+}
+
+### 11) إسناد وسوم جديدة للمنتج (إدارة علاقة N:M)
+POST {{FullStackAPI_AI_HostAddress}}/api/Products/AssignTags/1
+Content-Type: application/json
+
+{
+  "tagIds": [1, 2]
+}
+
+### 12) جلب جميع المنتجات مع كافة العلاقات
+GET {{FullStackAPI_AI_HostAddress}}/api/Products/GetProducts
+Accept: application/json
+
+### 13) حذف المنتج (تطبيق Cascade Delete على علاقاته)
+DELETE {{FullStackAPI_AI_HostAddress}}/api/Products/DeleteProduct/1
